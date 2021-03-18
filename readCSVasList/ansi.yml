@@ -1,0 +1,25 @@
+---
+- hosts: webservers
+  tasks:
+  - name: Read images from CSV file and return a list
+    read_csv:
+      path: file5.csv
+    register: image
+    delegate_to: localhost
+
+  - name: debug list
+    debug:
+      msg: "{{ item.IMAGE }}"
+    loop: "{{ image.list }}"
+
+  - name: Create directory
+    file:
+      path: /tmp/MENUITEM
+      state: directory
+
+  - name: Create a file
+    copy:
+      src: "~/shared/UAT/images/MENUITEM/{{ item.IMAGE }}"
+      dest: "/tmp/MENUITEM/{{ item.IMAGE }}"
+      remote_src: yes
+    loop: "{{ image.list }}"
